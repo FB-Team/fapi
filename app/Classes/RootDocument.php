@@ -2,19 +2,26 @@
 
 namespace App\Classes;
 use App\Interfaces\RootDocumentInterface;
-
+use App\Classes\Books\txtBookFormatter;
+use App\Classes\Books\wordBookFormatter;
 abstract class RootDocument implements RootDocumentInterface{
     protected $output = '';
     protected $input = '';
     protected $path = '';
     protected $filename = '';
+    protected $file = null;
+    private $trans = null;
    
-    public function __construct($filename, $path){
-        $this->filename = $filename;
-        $this->path = $path;
+    public function __construct($file){
+        $this->file = $file->path();
+        $this->path = '';
+        $className = $this->getClassNameFromExtension($this->file->getClientOriginalExtension());
+        $this->trans = new $className($file);
     }
-    
-    abstract public function getHtml();
+    public function getHtml()
+    {
+        return $this->trans->getHtml();
+    }
     abstract protected function transform();
 
     public static $supportedFormats = [
@@ -27,8 +34,15 @@ abstract class RootDocument implements RootDocumentInterface{
     public static function getClassNameFromExtension($ext){
         $className = 'BookFormatter';
         if (array_key_exists($ext, self::$supportedFormats)){
-            return self::$supportedFormats[$ext];
+            $className =  self::$supportedFormats[$ext] . $className;
+            if (class_exists($className)){
+                return $className;
+            }else{
+                throw new \Error("Cannot find the class name for the current extension!");
+            }        
+        }else{
+            throw new \Error("Not supported extension!");
         }
-        return null;
+        
     }
 }

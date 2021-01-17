@@ -4,7 +4,8 @@ namespace App\Classes\Books;
 
 use App\Classes\RootDocument;
 use PhpOffice;
-class wordBookFormatter extends RootDocument {
+use App\Interfaces\RootDocumentInterface;
+class wordBookFormatter extends RootDocument implements RootDocumentInterface {
     public function getHtml(){
         $this->transform();
         return $this->output;

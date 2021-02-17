@@ -4,7 +4,9 @@ namespace App\Classes;
 use App\Interfaces\RootDocumentInterface;
 use App\Classes\Books\txtBookFormatter;
 use App\Classes\Books\wordBookFormatter;
-abstract class RootDocument implements RootDocumentInterface{
+use Error;
+
+class RootDocument implements RootDocumentInterface{
     protected $output = '';
     protected $input = '';
     protected $path = '';
@@ -22,8 +24,10 @@ abstract class RootDocument implements RootDocumentInterface{
     {
         return $this->trans->getHtml();
     }
-    abstract protected function transform();
-
+    public function transform()
+    {
+        
+    }
     public static $supportedFormats = [
         'text/plain' => 'txt',
         'application/pdf' => 'pdf',
